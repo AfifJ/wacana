@@ -1,36 +1,10 @@
 from flask import Flask
-
-""" 
-project/
-    api/
-        model/
-            __init__.py
-            welcome.py
-        route/
-            home.py
-        schema/
-            __init__.py
-            welcome.py
-        service
-            __init__.py
-            welcome.py
-
-    test/
-        route/
-            __init__.py
-            test_home.py
-        __init.py
-
-    .gitignore
-    app.py
-    Pipfile
-    Pipfile.lock
-    README.md
-    requirements.txt
-    setup.py
-"""
+from application.auth.routes import auth
+from application.articles.routes import articles
 
 app = Flask(__name__)
+app.register_blueprint(auth)
+app.register_blueprint(articles)
 
 @app.route('/')
 def index():
@@ -39,3 +13,6 @@ def index():
 @app.route('/hello')
 def hello():
     return 'Hello, World'
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,21 @@
+@BASE_URL = http://127.0.0.1:5000
+
+### Index
+GET {{BASE_URL}}/
+User-Agent: rest-client
+Content-Type: application/json
+
+### Hello World
+GET {{BASE_URL}}/hello
+
+### Hello World with name
+POST {{BASE_URL}}/auth/register HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+email=some@email.com&password=aaaa2asdfaf
+
+### articel
+GET {{BASE_URL}}/articles
+
+### articel
+GET {{BASE_URL}}/auth/all
