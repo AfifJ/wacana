@@ -1,8 +1,11 @@
 from flask import Flask
 from application.auth.routes import auth
 from application.articles.routes import articles
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+# CORS(app, origins=['http://localhost:5173'])
 app.register_blueprint(auth)
 app.register_blueprint(articles)
 

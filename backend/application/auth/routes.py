@@ -1,21 +1,18 @@
-import email
 from flask import Blueprint, jsonify, request
 from application.database import client
-from application.schemas.user import validate_user
+from application.auth.user_schema import validate_user
 from flask import Blueprint, request, jsonify
-from application.schemas.user import validate_user
 from application.database import users_collection
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth.route("/register", methods=["POST"])
 def register():
+    data = request.json
     data = {
-        'email': request.form.get('email'),
-        'password': request.form.get('password')
+        'email': data['email'],
+        'password': data['password']
     }
-
-    # Validate user input
     validated_user, errors = validate_user(data)
     if errors:
         return jsonify({"errors": errors}), 400
@@ -29,11 +26,20 @@ def register():
 
     return jsonify({"message": "User registered successfully!"}), 201
 
+@auth.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    
+    # Get user from database
+    user = users_collection.find_one({"email": data["email"]})
+    
+    # Check if user exists and password matches
+    if not user or user["password"] != data["password"]:
+        return jsonify({"error": "Invalid email or password"}), 401
 
-
-@auth.route("/all")
-def all():
-    users = list(client.sample_mflix.users.find())
-    for user in users:
-        user["_id"] = str(user["_id"])
-    return jsonify(users)
+    return jsonify({
+        "message": "Login successful",
+        "user": {
+            "email": user["email"]
+        }
+    }), 200
