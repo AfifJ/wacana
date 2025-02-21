@@ -22,15 +22,12 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-      <div className="flex items-center space-x-3">
+      <Link to="/" className="flex items-center space-x-3">
         <span className="text-xl font-bold flex items-center">
           <span className="text-black">⚡</span> Wacana
         </span>
-      </div>
+      </Link>
       <div className="hidden md:flex space-x-6 text-gray-700">
-        <Link to="/" className="hover:text-black">
-          Home
-        </Link>
         <div className="relative group">
           <button
             onClick={toggleDropdown}
@@ -42,7 +39,7 @@ export default function Navbar() {
             Categories ▼
           </button>
           <div
-            className={`absolute left-0 mt-2 w-48 bg-white border rounded-lg shadow-lg ${
+            className={`absolute left-0 mt-2 w-48 bg-white border overflow-hidden rounded-lg shadow-lg z-50 ${
               isDropdownOpen ? "block" : "hidden"
             }`}
           >
@@ -57,7 +54,7 @@ export default function Navbar() {
             ))}
           </div>
         </div>
-        <Link to="/" className="hover:text-black">
+        <Link to="/favorite" className="hover:text-black">
           Favorit
         </Link>
         <Link to="/about" className="hover:text-black">
@@ -67,7 +64,7 @@ export default function Navbar() {
       <div className="flex space-x-4 items-center">
         {user ? (
           <div className="flex items-center gap-4">
-            <a className="flex items-center gap-4" href="/profile">
+            <Link to="/profile" className="flex items-center gap-4" >
               {user.photo_profile ? (
                 <img
                   src={user.photo_profile}
@@ -82,7 +79,7 @@ export default function Navbar() {
                 </div>
               )}
               <span>{user.username}</span>
-            </a>
+            </Link>
             <button
               onClick={logout}
               className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"

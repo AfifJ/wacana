@@ -27,5 +27,21 @@ GET {{BASE_URL}}/auth/all
 ### Get Profile
 GET {{BASE_URL}}/auth/profile/67b892880260c8c9a4f62dcf
 
-###
-http://127.0.0.1:5000/auth/profile/
+### Get Article Detail
+GET {{BASE_URL}}/articles/67b8b6e6792e3aa6e5c720ad
+User-Agent: rest-client
+Content-Type: application/json
+
+### Edit Article (Update)
+PUT {{BASE_URL}}/articles/67b8b6e6792e3aa6e5c720ad HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+  "title": "Updated Article Title",
+  "content": "Updated content for the article",
+  "thumbnail": null
+}
+
+### Get Articles
+GET {{BASE_URL}}/articles

@@ -43,9 +43,7 @@ users_validator = {
             },
             "articles": {
                 "bsonType": ["array", "null"],
-                "items": {
-                    "bsonType": "objectId"
-                },
+                "items": {"bsonType": "objectId"},
                 "minItems": 0,
                 "description": "'articles' is an array of article_ids",
             },
@@ -109,6 +107,10 @@ articles_validator = {
             "_id": {  # added _id definition
                 "bsonType": "objectId",
                 "description": "'_id' is required",
+            },
+            "thumbnail": {
+                "bsonType": ["null", "string"],
+                "description": "'thumbnail' is an optional string",
             },
             "title": {
                 "bsonType": "string",

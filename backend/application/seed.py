@@ -78,6 +78,7 @@ def generate_articles(num_articles, user_ids, category_ids):
             "author_id": author_id,  # Use author_id directly
             "category_id": random.choice(category_ids),
             "is_live": random.choice([True, False]),
+            "thumbnail": f"https://picsum.photos/id/{random.randint(1, 1000)}/200/300",  # added thumbnail
             "updated_at": datetime_to_timestamp(now),
         }
         articles.append(article)
