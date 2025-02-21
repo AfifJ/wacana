@@ -17,17 +17,20 @@ const MainContent = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       {/* Hero Section */}
-      <section className="relative w-full h-[400px] rounded-xl overflow-hidden mt-9">
+      <section className="relative w-full h-[400px] rounded-xl overflow-hidden">
         <img
           src="https://unsplash.it/500/500"
           alt="Hero"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end p-6 text-white">
-          <Link to={`/post/${latestPost.id}`} className="hover:underline">
-            <h2 className="text-3xl font-bold">{latestPost.title}</h2>
-          </Link>
-          <p className="mt-2 text-lg">{latestPost.content}</p>
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center p-6 text-white">
+          <h2 className="text-3xl font-bold">
+            Breaking Into Product Design: Advice from Untitled Founder, Frankie
+          </h2>
+          <p className="mt-2 text-lg">
+            Let’s get one thing out of the way: You don’t need a fancy degree to
+            get into Product Design.
+          </p>
         </div>
       </section>
 
@@ -37,15 +40,15 @@ const MainContent = () => {
         {error && <p>Error: {error}</p>}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           {articles.slice(0, visibleCount).map((article, index) => {
-            const randomIndex = Math.floor(Math.random() * 1000);
             return (
-              <div
+              <Link
+                to={`/post/${article._id}`}
                 key={index}
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
-                  src={`https://picsum.photos/id/${randomIndex}/200/300`}
-                  alt={`Blog ${randomIndex}`}
+                  src={article.thumbnail}
+                  alt={`Blog ${article.title}`}
                   className="w-full h-40 object-cover"
                 />
                 <div className="p-4">
@@ -54,11 +57,11 @@ const MainContent = () => {
                     {article.content}
                   </p>
                   <p className="text-gray-500 text-xs mt-2">
-                    Author ID: {article.author_id} • Category ID:{" "}
+                    Author: {article.author_id} • Category:{" "}
                     {article.category_id}
                   </p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
