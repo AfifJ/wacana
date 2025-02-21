@@ -12,6 +12,7 @@ const MainContent = () => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [visibleCount, setVisibleCount] = useState(6);
+  const [profiles, setProfiles] = useState({});
 
   useEffect(() => {
     fetchArticlesWithFavoriteStatus(user.id).then((updatedArticles) => {
@@ -113,7 +114,7 @@ const MainContent = () => {
           })}
         </div>
       </section>
-      {visibleCount < articles.length && (
+      {visibleCount < sortedArticles.length && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleLoadMore}
