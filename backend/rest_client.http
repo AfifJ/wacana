@@ -28,7 +28,7 @@ GET {{BASE_URL}}/auth/all
 GET {{BASE_URL}}/auth/profile/67b892880260c8c9a4f62dcf
 
 ### Get Article Detail
-GET {{BASE_URL}}/articles/67b8b6e6792e3aa6e5c720ad
+GET {{BASE_URL}}/articles/67b8c99b0244861a3abb5773
 User-Agent: rest-client
 Content-Type: application/json
 
@@ -45,3 +45,43 @@ Content-Type: application/json
 
 ### Get Articles
 GET {{BASE_URL}}/articles
+
+###
+GET {{BASE_URL}}/articles/by/67b8c99a0244861a3abb5768
+
+### Favorite an Article
+POST {{BASE_URL}}/articles/67b8c99b0244861a3abb5773/favorite HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+  "user_id": "67b8c9980244861a3abb5765"
+}
+
+###
+
+### Get Favorites by User ID
+POST {{BASE_URL}}/articles/favorite HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": "67b8c9980244861a3abb5765"
+}
+
+###
+
+### Retrieve User Favorites
+POST {{BASE_URL}}/articles/favorite HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": "67b8c9980244861a3abb5765"
+}
+
+### Remove Favorite Article
+DELETE {{BASE_URL}}/articles/67b8c99b0244861a3abb5773/favorite HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": "67b8c9980244861a3abb5765"
+}

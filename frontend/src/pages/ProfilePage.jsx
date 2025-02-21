@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // new import
 import { useAuth } from "../hooks/useAuth";
 import ProfileModal from "../components/ProfileModal";
 
 const ProfilePage = () => {
-  // Destructure updateProfile along with user from useAuth
   const { user, updateProfile } = useAuth();
+  const navigate = useNavigate(); // new hook initialization
 
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState("");
@@ -118,81 +119,94 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex justify-center items-center p-4">
-      <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
-        <div className="flex items-center space-x-4 mb-6">
-          {user?.photo_profile ? (
-            <img
-              className="h-24 w-24 rounded-full object-cover"
-              src={user.photo_profile}
-              alt="User profile"
-            />
-          ) : (
-            <div className="h-24 w-24 rounded-full bg-gray-500 flex items-center justify-center">
-              <span className="text-white text-2xl">
-                {getInitials(user?.username)}
-              </span>
+    <>
+      {/* New Back Button */}
+
+      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex justify-center items-center p-4">
+        <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
+          <div className="flex items-center space-x-4 mb-6">
+            {user?.photo_profile ? (
+              <img
+                className="h-24 w-24 rounded-full object-cover"
+                src={user.photo_profile}
+                alt="User profile"
+              />
+            ) : (
+              <div className="h-24 w-24 rounded-full bg-gray-500 flex items-center justify-center">
+                <span className="text-white text-2xl">
+                  {getInitials(user?.username)}
+                </span>
+              </div>
+            )}
+
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {user?.username}
+              </h3>
             </div>
-          )}
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              {user?.username}
-            </h3>
+            <div className="ms-auto p-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded"
+              >
+                Back
+              </button>
+            </div>
+          </div>
+          <div className="border-t border-gray-100 pt-4">
+            <dl className="divide-y divide-gray-100">
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-sm font-medium text-gray-900">User name</dt>
+                <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
+                  {user?.username}
+                  <button
+                    onClick={() => openModal("username")}
+                    className="text-blue-600 text-sm"
+                  >
+                    Edit
+                  </button>
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-sm font-medium text-gray-900">
+                  Email address
+                </dt>
+                <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
+                  {user?.email}
+                  <button
+                    onClick={() => openModal("email")}
+                    className="text-blue-600 text-sm"
+                  >
+                    Edit
+                  </button>
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-sm font-medium text-gray-900">Password</dt>
+                <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
+                  <button
+                    onClick={() => openModal("password")}
+                    className="text-blue-600 text-sm"
+                  >
+                    Forgot Password?
+                  </button>
+                </dd>
+              </div>
+            </dl>
           </div>
         </div>
-        <div className="border-t border-gray-100 pt-4">
-          <dl className="divide-y divide-gray-100">
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">User name</dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
-                {user?.username}
-                <button
-                  onClick={() => openModal("username")}
-                  className="text-blue-600 text-sm"
-                >
-                  Edit
-                </button>
-              </dd>
-            </div>
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">
-                Email address
-              </dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
-                {user?.email}
-                <button
-                  onClick={() => openModal("email")}
-                  className="text-blue-600 text-sm"
-                >
-                  Edit
-                </button>
-              </dd>
-            </div>
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">Password</dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0 flex justify-between items-center">
-                <button
-                  onClick={() => openModal("password")}
-                  className="text-blue-600 text-sm"
-                >
-                  Forgot Password?
-                </button>
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div>
 
-      <ProfileModal
-        isOpen={isOpen}
-        modalType={modalType}
-        formData={formData}
-        errors={errors}
-        handleChange={handleChange}
-        handleSave={handleSave}
-        closeModal={closeModal}
-      />
-    </div>
+        <ProfileModal
+          isOpen={isOpen}
+          modalType={modalType}
+          formData={formData}
+          errors={errors}
+          handleChange={handleChange}
+          handleSave={handleSave}
+          closeModal={closeModal}
+        />
+      </div>
+    </>
   );
 };
 

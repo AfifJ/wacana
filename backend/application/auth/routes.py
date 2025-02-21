@@ -1,5 +1,6 @@
 from bson import ObjectId
 import bcrypt
+from application.database import articles_collection
 from flask import Blueprint, request, jsonify
 from application.database import users_collection
 from application.auth.user_schema import hash_password, validate_user

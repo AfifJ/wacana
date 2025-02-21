@@ -9,6 +9,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PostDetail from "./pages/articles/PostDetail"; // Import komponen PostDetail
 import FavoritePage from "./pages/FavoritePage";
 import CreateArticle from "./pages/articles/CreateArticle";
+import MyPost from "./pages/MyPost";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="favorite" element={<FavoritePage />} />
         <Route path="post/:id" element={<PostDetail />} />
         <Route path="create" element={<CreateArticle />} />
+        <Route path="posts/" element={<MyPost />} />
           
         <Route element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
