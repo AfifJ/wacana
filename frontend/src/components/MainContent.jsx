@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import useArticles from "../hooks/useArticles";
 import { useState, useEffect } from "react";
@@ -120,23 +121,30 @@ const MainContent = () => {
                     {article.category_id}
                   </p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-      {visibleCount < articles.length && (
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={handleLoadMore}
-            className="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
-          >
-            Load more...
-          </button>
-        </div>
-      )}
-    </div>
+              )}
+              <span>{user.username}</span>
+            </Link>
+            <button
+              onClick={logout}
+              className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link to="/login" className="text-gray-700 hover:text-black">
+              Log in
+            </Link>
+            <Link
+              to="/register"
+              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 focus:outline-none"
+            >
+              Sign up
+            </Link>
+          </>
+        )}
+      </div>
+    </nav>
   );
-};
-
-export default MainContent;
+}

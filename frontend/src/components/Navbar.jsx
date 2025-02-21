@@ -7,10 +7,7 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const getInitials = (name) => {
-    const initials = name
-      .split(" ")
-      .map((n) => n[0])
-      .join("");
+    const initials = name.split(" ").map((n) => n[0]).join("");
     return initials.toUpperCase();
   };
 

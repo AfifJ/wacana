@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -17,13 +17,8 @@ export function useAuth() {
         password,
         name,
       });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      alert("Register Berhasil: " + data.message);
+      // axios sudah mengembalikan data di response.data
+      alert("Register Berhasil: " + response.data.message);
       const userData = {
         email,
         name,
@@ -64,7 +59,10 @@ export function useAuth() {
   const updateProfile = async (userId, updateData) => {
     setLoading(true);
     try {
-      const response = await axios.put(`http://127.0.0.1:5000/auth/profile/${userId}`, updateData);
+      const response = await axios.put(
+        `http://127.0.0.1:5000/auth/profile/${userId}`,
+        updateData
+      );
       alert(response.data.message);
       setUser(response.data.user);
       sessionStorage.setItem("user", JSON.stringify(response.data.user));
@@ -76,5 +74,16 @@ export function useAuth() {
     }
   };
 
-  return { user, logout, register, login, loading, updateProfile };
+  // Fungsi untuk mengambil profil user berdasarkan userId
+  const getUserById = useCallback(async (userId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/auth/profile/${userId}`);
+      return response.data; // Asumsikan data profil mengandung field 'username'
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      throw error;
+    }
+  }, []);
+
+  return { user, logout, register, login, loading, updateProfile, getUserById };
 }
