@@ -3,9 +3,19 @@ from application.database import articles_collection
 from application.articles.article_schema import validate_article
 from bson import ObjectId
 from datetime import datetime
-from bson.timestamp import Timestamp  # Import Timestamp
+from bson.timestamp import Timestamp  # Added import for Timestamp
 
 articles = Blueprint("articles", __name__, url_prefix="/articles")
+
+def serialize_doc(doc):
+    # Convert fields that are not JSON serializable (e.g., Timestamp/datetime) to string
+    for key, value in doc.items():
+        if key == "updated_at" and isinstance(value, Timestamp):
+            doc[key] = datetime.fromtimestamp(value.time).isoformat()
+        elif isinstance(value, (datetime, Timestamp)):  # Updated to check for Timestamp as well
+            # Use isoformat() if available, otherwise use str()
+            doc[key] = value.isoformat() if hasattr(value, "isoformat") else str(value)
+    return doc
 
 @articles.route("/", methods=["POST"])
 def create_article():
@@ -15,7 +25,7 @@ def create_article():
         return jsonify({"errors": errors}), 400
 
     # Ubah model Pydantic menjadi dictionary
-    article_doc = validated_article.dict()
+    article_doc = validated_article.model_dump()
 
     # Jika thumbnail ada, konversi ke string (jika tidak None)
     if article_doc.get("thumbnail"):
@@ -49,6 +59,10 @@ def list_articles():
     articles_list = []
     for article in articles_cursor:
         article["_id"] = str(article["_id"])
+        article["author_id"] = str(article["author_id"])
+        article["category_id"] = str(article["category_id"])
+        # Apply serialization to convert Timestamp/datetime fields
+        article = serialize_doc(article)
         articles_list.append(article)
     return jsonify(articles_list), 200
 
@@ -57,6 +71,9 @@ def get_article(id):
     article = articles_collection.find_one({"_id": ObjectId(id)})
     if article:
         article["_id"] = str(article["_id"])
+        article["author_id"] = str(article["author_id"])
+        article["category_id"] = str(article["category_id"])
+        article = serialize_doc(article)
         return jsonify(article), 200
     return jsonify({"error": "Article not found"}), 404
 

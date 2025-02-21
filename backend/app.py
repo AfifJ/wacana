@@ -4,7 +4,10 @@ from application.articles.routes import articles
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app)
+if (cors) :
+    print("cors enable")
+
 # CORS(app, origins=['http://localhost:5173'])
 app.register_blueprint(auth)
 app.register_blueprint(articles)
