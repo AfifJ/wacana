@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"; // Import Link dari react-router-dom
+import { Link } from "react-router-dom";
 import useArticles from "../hooks/useArticles";
 import { useState, useEffect } from "react";
 
@@ -9,6 +9,9 @@ const MainContent = () => {
   useEffect(() => {
     fetchArticles();
   }, []);
+
+  // Ambil artikel terbaru (misalnya, artikel pertama dari list)
+  const latestPost = articles.length > 0 ? articles[0] : null;
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 6);
@@ -24,10 +27,16 @@ const MainContent = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end p-6 text-white">
-          <Link to={`/post/${latestPost.id}`} className="hover:underline">
-            <h2 className="text-3xl font-bold">{latestPost.title}</h2>
-          </Link>
-          <p className="mt-2 text-lg">{latestPost.content}</p>
+          {latestPost ? (
+            <>
+              <Link to={`/post/${latestPost._id}`} className="hover:underline">
+                <h2 className="text-3xl font-bold">{latestPost.title}</h2>
+              </Link>
+              <p className="mt-2 text-lg">{latestPost.content}</p>
+            </>
+          ) : (
+            <h2 className="text-3xl font-bold">No Articles Available</h2>
+          )}
         </div>
       </section>
 
@@ -40,7 +49,7 @@ const MainContent = () => {
             const randomIndex = Math.floor(Math.random() * 1000);
             return (
               <div
-                key={index}
+                key={article._id || index}
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
