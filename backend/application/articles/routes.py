@@ -32,8 +32,10 @@ def create_article():
     except Exception:
         return jsonify({"error": "Invalid category_id format"}), 400
 
-    # Konversi datetime.utcnow() ke BSON Timestamp
-    article_doc["created_at"] = Timestamp(int(datetime.utcnow().timestamp()), 1)
+    # Set created_at dan updated_at menggunakan BSON Timestamp
+    current_timestamp = Timestamp(int(datetime.utcnow().timestamp()), 1)
+    article_doc["created_at"] = current_timestamp
+    article_doc["updated_at"] = current_timestamp
 
     result = articles_collection.insert_one(article_doc)
     return jsonify({
@@ -66,6 +68,9 @@ def update_article(id):
         return jsonify({"errors": errors}), 400
 
     article_doc = validated_article.dict()
+    # Tambahkan updated_at untuk mencatat waktu update
+    article_doc["updated_at"] = Timestamp(int(datetime.utcnow().timestamp()), 1)
+
     result = articles_collection.update_one({"_id": ObjectId(id)}, {"$set": article_doc})
     if result.matched_count:
         return jsonify({"message": "Article updated successfully"}), 200
