@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import useArticles from "../hooks/useArticles";
+import { removeFromFavorite } from "../utils/removeFromFavorite"; // added import
 
 const FavoritePage = () => {
   const [favoriteArticles, setFavoriteArticles] = useState([]);
@@ -51,6 +52,30 @@ const FavoritePage = () => {
                       Author ID: {article.author_id} • Category ID:{" "}
                       {article.category_id}
                     </p>
+                    <button
+                      onClick={async () => {
+                        if (
+                          !window.confirm(
+                            "Are you sure you want to remove this article from favorites?"
+                          )
+                        )
+                          return;
+                        try {
+                          await removeFromFavorite({
+                            article_id: article._id,
+                            user_id: user.id,
+                          });
+                          setFavoriteArticles((prev) =>
+                            prev.filter((item) => item._id !== article._id)
+                          );
+                        } catch (error) {
+                          console.error("Failed to remove favorite", error);
+                        }
+                      }}
+                      className="mt-4 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none"
+                    >
+                      Remove Favorite
+                    </button>
                   </div>
                 </div>
               ))}
