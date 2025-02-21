@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const categories = ["Category 1", "Category 2", "Category 3"]; // Dummy array for categories
+  const categories = ["Category 1", "Category 2", "Category 3"];
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <nav className={`fixed w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center transition-opacity duration-300 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
       <div className="flex items-center space-x-3">
         <span className="text-xl font-bold flex items-center">
           <span className="text-black">⚡</span> Wacana
@@ -26,12 +40,12 @@ export default function Navbar() {
         <div className="relative group">
           <button
             onClick={toggleDropdown}
-            onBlur={() => setIsDropdownOpen(false)} // Close dropdown on blur
+            onBlur={() => setIsDropdownOpen(false)}
             className="hover:text-black focus:outline-none"
             aria-haspopup="true"
             aria-expanded={isDropdownOpen}
           >
-            Categories ▼
+            Categories <span className="ml-1">▼</span>
           </button>
           <div
             className={`absolute left-0 mt-2 w-48 bg-white border rounded-lg shadow-lg ${
