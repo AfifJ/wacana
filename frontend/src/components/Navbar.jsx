@@ -74,6 +74,9 @@ export default function Navbar() {
         <Link to="/about" className="hover:text-black">
           About
         </Link>
+        <Link to="/create" className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3">
+          Create
+        </Link>
       </div>
       <div className="flex space-x-4 items-center">
         {user ? (
