@@ -127,6 +127,13 @@ export default function useArticles() {
   };
 
   const updateArticle = async (id, updatedData) => {
+    // Validasi data sebelum melakukan PUT request
+    const { title, content, thumbnail, author_id, category_id, is_live } = updatedData;
+    if (!title || !content || !thumbnail || !author_id || !category_id || typeof is_live !== 'boolean') {
+      setError("Invalid data provided");
+      throw new Error("Invalid data provided");
+    }
+
     setLoading(true);
     try {
       const res = await axios.put(`http://127.0.0.1:5000/articles/${id}`, updatedData, {

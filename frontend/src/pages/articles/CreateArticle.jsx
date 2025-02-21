@@ -28,7 +28,7 @@ const CreateArticle = () => {
     const articleData = {
       title,
       content,
-      thumbnail,
+      thumbnail: null,
       category_id: categoryId,
       author_id: user ? user.id : "", // Pastikan user sudah login dan memiliki _id
       is_live: isLive,
@@ -37,7 +37,7 @@ const CreateArticle = () => {
     try {
       await postArticle(articleData);
       alert("Article posted successfully!");
-      navigate("/");
+      navigate("/posts");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -78,7 +78,11 @@ const CreateArticle = () => {
               />
               <div className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg">
                 {thumbnail ? (
-                  <img src={thumbnail} alt="Thumbnail" className="w-full h-full object-cover rounded-lg" />
+                  <img
+                    src={thumbnail}
+                    alt="Thumbnail"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
                 ) : (
                   <PhotographIcon className="text-gray-400 text-4xl" />
                 )}
@@ -105,16 +109,16 @@ const CreateArticle = () => {
               required
             />
           </div>
-          <div>
+          {/* <div>
             <label className="block font-semibold mb-2">Category ID</label>
             <input
               type="text"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full p-2 border rounded"
-              required
+              // required
             />
-          </div>
+          </div> */}
           <div className="flex items-center">
             <label className="font-semibold mr-2">Is Live:</label>
             <input

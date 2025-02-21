@@ -4,24 +4,24 @@ import Navbar from "../components/Navbar";
 const AboutUs = () => {
   const teamMembers = [
     {
-      name: "Mary Brown",
-      role: "Creative Leader",
-      image: "https://tse1.mm.bing.net/th?id=OIP.jVfc62FgQkvl2NTax9qFVQHaJW&pid=Api&P=0&h=180",
+      name: "Afif Jamhari",
+      role: "124220018",
+      image: "https://picsum.photos/id/18/200/300",
     },
     {
-      name: "Ann Richmond",
-      role: "Creative Leader",
-      image: "https://tse1.mm.bing.net/th?id=OIP.jVfc62FgQkvl2NTax9qFVQHaJW&pid=Api&P=0&h=180",
+      name: "Habib Maulana Akbar",
+      role: "124220022",
+      image: "https://picsum.photos/id/50/200/300",
     },
     {
-      name: "Bob Greenfield",
-      role: "Programming Guru",
-      image: "https://tse1.mm.bing.net/th?id=OIP.jVfc62FgQkvl2NTax9qFVQHaJW&pid=Api&P=0&h=180",
+      name: "Ammar Bayu Saputra",
+      role: "124220101",
+      image: "https://picsum.photos/id/65/200/300",
     },
     {
-      name: "Bob Greenfield",
-      role: "Programming Guru",
-      image: "https://tse1.mm.bing.net/th?id=OIP.jVfc62FgQkvl2NTax9qFVQHaJW&pid=Api&P=0&h=180",
+      name: "Zola Dimas Firmansyah",
+      role: "124220106",
+      image: "https://picsum.photos/id/100/200/300",
     },
   ];
 

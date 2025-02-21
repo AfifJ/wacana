@@ -26,10 +26,10 @@ const EditArticle = () => {
       try {
         const data = await getArticleById(id);
         // Isi form dengan data artikel
-        setTitle(data.title || "");
-        setContent(data.content || "");
-        setThumbnail(data.thumbnail || "");
-        setCategoryId(data.category_id || "");
+        setTitle(data.title);
+        setContent(data.content);
+        setThumbnail(data.thumbnail);
+        setCategoryId("67b8c99a0244861a3abb5770");
         setIsLive(data.is_live !== false);
       } catch (err) {
         setError(err.message);
@@ -37,7 +37,7 @@ const EditArticle = () => {
         setLoading(false);
       }
     };
-    console.log(categoryId)
+    console.log(categoryId);
     fetchData();
   }, [id, getArticleById]);
 
@@ -60,15 +60,14 @@ const EditArticle = () => {
       content,
       thumbnail,
       category_id: categoryId,
-      // Gunakan author_id dari data artikel yang diambil atau user, pastikan field ini tidak kosong
-      author_id: user ? user.id : "",
+      author_id: user.id,
       is_live: isLive,
     };
 
     try {
       await updateArticle(id, updatedData);
       alert("Article updated successfully!");
-      navigate("/mypost");
+      navigate("/posts");
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -80,7 +79,8 @@ const EditArticle = () => {
 
   // Delete artikel
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this article?")) return;
+    if (!window.confirm("Are you sure you want to delete this article?"))
+      return;
     setLoading(true);
     try {
       await deleteArticle(id);
@@ -156,13 +156,13 @@ const EditArticle = () => {
             />
           </div>
           <div>
-            <label className="block font-semibold mb-2">Category ID</label>
+            {/* <label className="block font-semibold mb-2">Category ID</label> */}
             <input
-              type="text"
+              type="hidden"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full p-2 border rounded"
-              required
+              // required
             />
           </div>
           <div className="flex items-center">

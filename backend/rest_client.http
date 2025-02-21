@@ -85,3 +85,18 @@ Content-Type: application/json
 {
   "user_id": "67b8c9980244861a3abb5765"
 }
+
+###
+### Update Article
+PUT {{BASE_URL}}/articles/67b8c99b0244861a3abb5775 HTTP/1.1
+User-Agent: rest-client
+Content-Type: application/json
+
+{
+  "title": "New Article Title",
+  "content": "New content for the article",
+  "thumbnail": "http://new-thumbnail-url",
+  "author_id": "67b8c9980244861a3abb5765",
+  "category_id": "67b8c9980244861a3abb5766",
+  "is_live": true
+}

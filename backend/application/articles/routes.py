@@ -51,13 +51,15 @@ def create_article():
     except Exception:
         return jsonify({"error": "Invalid author_id format"}), 400
 
-    try:
-        article_doc["category_id"] = ObjectId(article_doc["category_id"])
-    except Exception:
-        return jsonify({"error": "Invalid category_id format"}), 400
+    if article_doc.get("category_id"):
+        try:
+            article_doc["category_id"] = ObjectId(article_doc["category_id"])
+        except Exception:
+            return jsonify({"error": "Invalid category_id format"}), 400
+    else:
+        article_doc["category_id"] = None
 
     now_ts = Timestamp(int(datetime.utcnow().timestamp()), 1)
-    article_doc["created_at"] = now_ts
     article_doc["updated_at"] = now_ts
 
     result = articles_collection.insert_one(article_doc)
@@ -197,6 +199,7 @@ def get_articles_by_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @articles.route("/favorite", methods=["POST"])
 def get_user_favorites():
     data = request.json
@@ -229,6 +232,7 @@ def get_user_favorites():
         favorites_list.append(convert_document(article))
     return jsonify(favorites_list), 200
 
+
 @articles.route("/<article_id>/favorite", methods=["POST"])
 def add_favorite(article_id):
     data = request.json
@@ -246,12 +250,12 @@ def add_favorite(article_id):
         return jsonify({"error": "Article not found"}), 404
 
     result = users_collection.update_one(
-        {"_id": user_obj_id},
-        {"$addToSet": {"favorite": article_obj_id}}
+        {"_id": user_obj_id}, {"$addToSet": {"favorite": article_obj_id}}
     )
     if result.matched_count:
         return jsonify({"message": "Article added to favorites"}), 200
     return jsonify({"error": "User not found"}), 404
+
 
 @articles.route("/<article_id>/favorite", methods=["DELETE"])
 def remove_favorite(article_id):
@@ -270,8 +274,7 @@ def remove_favorite(article_id):
         return jsonify({"error": "Article not found"}), 404
 
     result = users_collection.update_one(
-        {"_id": user_obj_id},
-        {"$pull": {"favorite": article_obj_id}}
+        {"_id": user_obj_id}, {"$pull": {"favorite": article_obj_id}}
     )
     if result.modified_count:
         return jsonify({"message": "Article removed from favorites"}), 200
