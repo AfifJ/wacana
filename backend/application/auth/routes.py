@@ -1,5 +1,5 @@
+from bson import ObjectId
 import bcrypt
-from flask import Blueprint, jsonify, request
 from flask import Blueprint, request, jsonify
 from application.database import users_collection
 from application.auth.user_schema import hash_password, validate_user
@@ -35,18 +35,76 @@ def register():
 @auth.route("/login", methods=["POST"])
 def login():
     data = request.json
-    
+
     # Get user from database
     user = users_collection.find_one({"email": data["email"]})
-    
+
     # Check if user exists and verify password
     if not user or not bcrypt.checkpw(
-        data["password"].encode("utf-8"), 
-        user["password"].encode("utf-8")
+        data["password"].encode("utf-8"), user["password"].encode("utf-8")
     ):
         return jsonify({"error": "Invalid email or password"}), 401
 
-    return jsonify({
-        "message": "Login successful", 
-        "user": {"email": user["email"]}
-    }), 200
+    return (
+        jsonify(
+            {
+                "message": "Login successful",
+                "user": {
+                    "id": str(user["_id"]),
+                    "email": user["email"],
+                    "username": user["username"],
+                    "photo_profile": user["photo_profile"],
+                },
+            }
+        ),
+        200,
+    )
+
+
+@auth.route("/profile/<user_id>", methods=["GET"])
+def get_profile(user_id):
+    try:
+        user = users_collection.find_one(
+            {"_id": ObjectId(user_id)},
+            {"username": 1, "email": 1, "photo_profile": 1},
+        )
+        if user:
+            user["id"] = str(user["_id"])
+            del user["_id"]
+            return jsonify(user), 200
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@auth.route("/profile/<user_id>", methods=["PUT"])
+def update_profile(user_id):
+    data = request.json
+    update_data = {}
+
+    if "username" in data:
+        update_data["username"] = data["username"]
+    if "email" in data:
+        update_data["email"] = data["email"]
+    if "newPassword" in data:
+        update_data["password"] = hash_password(data["newPassword"])
+
+    try:
+        result = users_collection.update_one(
+            {"_id": ObjectId(user_id)}, {"$set": update_data}
+        )
+        if result.matched_count:
+            user = users_collection.find_one(
+                {"_id": ObjectId(user_id)},
+                {"username": 1, "email": 1, "photo_profile": 1},
+            )
+            if user:
+                user["id"] = str(user["_id"])
+            del user["_id"]
+            return (
+                jsonify({"message": "Profile updated successfully!", "user": user}),
+                200,
+            )
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

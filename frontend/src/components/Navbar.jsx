@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+
+  const getInitials = (name) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+    return initials.toUpperCase();
+  };
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown
 
   const categories = ["Category 1", "Category 2", "Category 3"]; // Dummy array for categories
@@ -58,20 +66,30 @@ export default function Navbar() {
       </div>
       <div className="flex space-x-4 items-center">
         {user ? (
-          <>
-            <img
-              src={user.profilePic}
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-            />
-            <span>{user.name}</span>
+          <div className="flex items-center gap-4">
+            <a className="flex items-center gap-4" href="/profile">
+              {user.photo_profile ? (
+                <img
+                  src={user.photo_profile}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
+                  <span className="text-white">
+                    {getInitials(user.username)}
+                  </span>
+                </div>
+              )}
+              <span>{user.username}</span>
+            </a>
             <button
               onClick={logout}
-              className="text-gray-700 hover:text-black focus:outline-none"
+              className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"
             >
               Logout
             </button>
-          </>
+          </div>
         ) : (
           <>
             <Link to="/login" className="text-gray-700 hover:text-black">

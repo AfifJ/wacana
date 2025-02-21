@@ -34,10 +34,6 @@ export function useAuth() {
       // navigate("/profile");
     } catch (error) {
       console.log(error);
-      alert(
-        "Register Gagal: " +
-          JSON.stringify(error?.response?.data?.errors || "Server error")
-      );
     } finally {
       setLoading(false);
     }
@@ -50,21 +46,11 @@ export function useAuth() {
         email,
         password,
       });
-      alert("Login Berhasil: " + response.data.message);
-      const userData = {
-        email,
-        name: email,
-        profilePic: "https://i.pravatar.cc/50",
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setUser(response.data.user);
       navigate("/");
     } catch (error) {
       console.log(error);
-      alert(
-        "Login Gagal: " +
-          JSON.stringify(error?.response?.data?.errors || "Server error")
-      );
     } finally {
       setLoading(false);
     }
@@ -75,5 +61,20 @@ export function useAuth() {
     setUser(null);
   };
 
-  return { user, logout, register, login, loading };
+  const updateProfile = async (userId, updateData) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(`http://127.0.0.1:5000/auth/profile/${userId}`, updateData);
+      alert(response.data.message);
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Gagal memperbarui profil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { user, logout, register, login, loading, updateProfile };
 }
