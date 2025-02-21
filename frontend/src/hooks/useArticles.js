@@ -126,6 +126,35 @@ export default function useArticles() {
     }
   };
 
+  const updateArticle = async (id, updatedData) => {
+    setLoading(true);
+    try {
+      const res = await axios.put(`http://127.0.0.1:5000/articles/${id}`, updatedData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      setLoading(false);
+      return res.data;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  // Delete article
+  const deleteArticle = async (id) => {
+    setLoading(true);
+    try {
+      const res = await axios.delete(`http://127.0.0.1:5000/articles/${id}`);
+      setLoading(false);
+      return res.data;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+      throw err;
+    }
+  };
+
   return {
     articles,
     error,
@@ -135,6 +164,8 @@ export default function useArticles() {
     getArticlesByUser,
     fetchFavoriteArticles,
     fetchArticlesWithFavoriteStatus,
-    postArticle
+    postArticle,
+    updateArticle,
+    deleteArticle
   };
 }

@@ -11,6 +11,7 @@ import FavoritePage from "./pages/FavoritePage";
 import CreateArticle from "./pages/articles/CreateArticle";
 import MyPost from "./pages/MyPost";
 import SearchPage from "./pages/SearchPage";
+import EditPost from "./pages/articles/EditPost";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="about" element={<AboutPage />} />
         <Route path="favorite" element={<FavoritePage />} />
         <Route path="post/:id" element={<PostDetail />} />
+        <Route path="edit/:id" element={<EditPost />} />
         <Route path="create" element={<CreateArticle />} />
         <Route path="posts/" element={<MyPost />} />
         <Route path="search/" element={<SearchPage />} />
