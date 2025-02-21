@@ -1,6 +1,7 @@
+from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from application.database import client
-from application.auth.user_schema import validate_user
+from application.auth.user_schema import hash_password, validate_user
 from flask import Blueprint, request, jsonify
 from application.database import users_collection
 
@@ -43,3 +44,33 @@ def login():
             "email": user["email"]
         }
     }), 200
+
+@auth.route('/profile/<user_id>', methods=['GET'])
+def get_profile(user_id):
+    try:
+        user = users_collection.find_one({"_id": ObjectId(user_id)}, {"username": 1, "email": 1, "photo_profile": 1, "_id": 0})
+        if user:
+            return jsonify(user), 200
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@auth.route('/profile/<user_id>', methods=['PUT'])
+def update_profile(user_id):
+    data = request.json
+    update_data = {}
+    
+    if 'username' in data:
+        update_data['username'] = data['username']
+    if 'email' in data:
+        update_data['email'] = data['email']
+    if 'newPassword' in data:
+        update_data['password'] = hash_password(data['newPassword'])
+    
+    try:
+        result = users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": update_data})
+        if result.matched_count:
+            return jsonify({"message": "Profile updated successfully!"}), 200
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

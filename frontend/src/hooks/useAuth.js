@@ -7,6 +7,7 @@ export function useAuth() {
   const [user, setUser] = useState(() => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
   const register = async (email, password, name) => {
@@ -69,5 +70,32 @@ export function useAuth() {
     setUser(null);
   };
 
-  return { user, logout, register, login, loading };
+  const getProfile = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/auth/profile/${userId}`);
+      setProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      alert("Gagal mengambil data profil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async (userId, updateData) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(`http://127.0.0.1:5000/auth/profile/${userId}`, updateData);
+      alert(response.data.message);
+      getProfile(userId); // Refresh profile data
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Gagal memperbarui profil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { user, logout, register, login, loading, getProfile, profile, updateProfile };
 }
