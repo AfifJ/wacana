@@ -1,13 +1,22 @@
-import { Link } from "react-router-dom"; // Import Link dari react-router-dom
+import { Link } from "react-router-dom";
 import useArticles from "../hooks/useArticles";
 import { useState, useEffect } from "react";
+import { addToFavorite } from "../utils/addToFavorite";
+import { removeFromFavorite } from "../utils/removeFromFavorite";
 
 const MainContent = () => {
-  const { articles, error, loading, fetchArticles } = useArticles();
+  const { error, loading, fetchArticlesWithFavoriteStatus } = useArticles();
+  const [articles, setArticles] = useState([]);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    fetchArticles();
+    fetchArticlesWithFavoriteStatus(user.id).then((updatedArticles) => {
+      setArticles(updatedArticles);
+    });
   }, []);
 
   const handleLoadMore = () => {
@@ -16,7 +25,6 @@ const MainContent = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
-      {/* Hero Section */}
       <section className="relative w-full h-[400px] rounded-xl overflow-hidden">
         <img
           src="https://unsplash.it/500/500"
@@ -28,8 +36,8 @@ const MainContent = () => {
             Breaking Into Product Design: Advice from Untitled Founder, Frankie
           </h2>
           <p className="mt-2 text-lg">
-            Let’s get one thing out of the way: You don’t need a fancy degree to
-            get into Product Design.
+            Let{"'"}s get one thing out of the way: You don{`'`}t need a fancy
+            degree to get into Product Design.
           </p>
         </div>
       </section>
@@ -41,27 +49,66 @@ const MainContent = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           {articles.slice(0, visibleCount).map((article, index) => {
             return (
-              <Link
-                to={`/post/${article._id}`}
+              <div
                 key={index}
-                className="bg-white rounded-lg shadow overflow-hidden"
+                className="relative bg-white rounded-lg shadow overflow-hidden"
               >
                 <img
                   src={article.thumbnail}
                   alt={`Blog ${article.title}`}
                   className="w-full h-40 object-cover"
                 />
+                <button
+                  onClick={async () => {
+                    try {
+                      if (article.isFavorite) {
+                        await removeFromFavorite({
+                          article_id: article._id,
+                          user_id: user.id,
+                        });
+                      } else {
+                        await addToFavorite({
+                          article_id: article._id,
+                          user_id: user.id,
+                        });
+                      }
+                      setArticles((prevArticles) =>
+                        prevArticles.map((item) =>
+                          item._id === article._id
+                            ? { ...item, isFavorite: !item.isFavorite }
+                            : item
+                        )
+                      );
+                    } catch (error) {
+                      console.error(
+                        article.isFavorite
+                          ? "Failed to remove favorite"
+                          : "Failed to add favorite",
+                        error
+                      );
+                    }
+                  }}
+                  className={`absolute top-2 right-2 px-3 py-1 rounded border ${
+                    article.isFavorite
+                      ? "bg-gray-600 text-white border-gray-400"
+                      : "bg-white text-gray-800 border-gray-400"
+                  } hover:opacity-90 focus:outline-none`}
+                >
+                  {article.isFavorite ? "Favorited" : "Add to Favorites"}
+                </button>
                 <div className="p-4">
-                  <h4 className="text-lg font-semibold">{article.title}</h4>
-                  <p className="text-gray-600 text-sm mt-2">
-                    {article.content}
-                  </p>
+                  <Link to={`/post/${article._id}`}>
+                    <h4 className="text-lg font-semibold">{article.title}</h4>
+                    <p className="text-gray-600 text-sm mt-2">
+                      {article.content}
+                    </p>
+                  </Link>
                   <p className="text-gray-500 text-xs mt-2">
                     Author: {article.author_id} • Category:{" "}
                     {article.category_id}
                   </p>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

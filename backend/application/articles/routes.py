@@ -196,3 +196,83 @@ def get_articles_by_user(user_id):
         return jsonify(articles_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@articles.route("/favorite", methods=["POST"])
+def get_user_favorites():
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+
+    try:
+        user_obj_id = ObjectId(user_id)
+    except Exception:
+        return jsonify({"error": "Invalid user_id format"}), 400
+
+    user = users_collection.find_one({"_id": user_obj_id})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    favorite_ids = user.get("favorite", [])
+    favorites_cursor = articles_collection.find({"_id": {"$in": favorite_ids}})
+    favorites_list = []
+    for article in favorites_cursor:
+        article["_id"] = str(article["_id"])
+        author = articles_collection.database.users.find_one(
+            {"_id": ObjectId(article["author_id"])}
+        )
+        category = articles_collection.database.categories.find_one(
+            {"_id": ObjectId(article["category_id"])}
+        )
+        article["author_id"] = author["username"] if author else None
+        article["category_id"] = category["name"] if category else None
+        favorites_list.append(convert_document(article))
+    return jsonify(favorites_list), 200
+
+@articles.route("/<article_id>/favorite", methods=["POST"])
+def add_favorite(article_id):
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    try:
+        article_obj_id = ObjectId(article_id)
+        user_obj_id = ObjectId(user_id)
+    except Exception:
+        return jsonify({"error": "Invalid ID format"}), 400
+
+    article = articles_collection.find_one({"_id": article_obj_id})
+    if not article:
+        return jsonify({"error": "Article not found"}), 404
+
+    result = users_collection.update_one(
+        {"_id": user_obj_id},
+        {"$addToSet": {"favorite": article_obj_id}}
+    )
+    if result.matched_count:
+        return jsonify({"message": "Article added to favorites"}), 200
+    return jsonify({"error": "User not found"}), 404
+
+@articles.route("/<article_id>/favorite", methods=["DELETE"])
+def remove_favorite(article_id):
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    try:
+        article_obj_id = ObjectId(article_id)
+        user_obj_id = ObjectId(user_id)
+    except Exception:
+        return jsonify({"error": "Invalid ID format"}), 400
+
+    article = articles_collection.find_one({"_id": article_obj_id})
+    if not article:
+        return jsonify({"error": "Article not found"}), 404
+
+    result = users_collection.update_one(
+        {"_id": user_obj_id},
+        {"$pull": {"favorite": article_obj_id}}
+    )
+    if result.modified_count:
+        return jsonify({"message": "Article removed from favorites"}), 200
+    return jsonify({"error": "User not found or article was not in favorites"}), 404
