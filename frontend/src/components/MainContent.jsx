@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"; // Import Link dari react-router-dom
 import useArticles from "../hooks/useArticles";
 import { useState, useEffect } from "react";
 
@@ -16,20 +17,17 @@ const MainContent = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       {/* Hero Section */}
-      <section className="relative w-full h-[400px] rounded-xl overflow-hidden">
+      <section className="relative w-full h-[400px] rounded-xl overflow-hidden mt-9">
         <img
           src="https://unsplash.it/500/500"
           alt="Hero"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center p-6 text-white">
-          <h2 className="text-3xl font-bold">
-            Breaking Into Product Design: Advice from Untitled Founder, Frankie
-          </h2>
-          <p className="mt-2 text-lg">
-            Let’s get one thing out of the way: You don’t need a fancy degree to
-            get into Product Design.
-          </p>
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end p-6 text-white">
+          <Link to={`/post/${latestPost.id}`} className="hover:underline">
+            <h2 className="text-3xl font-bold">{latestPost.title}</h2>
+          </Link>
+          <p className="mt-2 text-lg">{latestPost.content}</p>
         </div>
       </section>
 

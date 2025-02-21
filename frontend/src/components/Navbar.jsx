@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const getInitials = (name) => {
     const initials = name
@@ -12,13 +14,25 @@ export default function Navbar() {
       .join("");
     return initials.toUpperCase();
   };
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown
 
-  const categories = ["Category 1", "Category 2", "Category 3"]; // Dummy array for categories
+  const categories = ["Category 1", "Category 2", "Category 3"];
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
@@ -31,12 +45,12 @@ export default function Navbar() {
         <div className="relative group">
           <button
             onClick={toggleDropdown}
-            onBlur={() => setIsDropdownOpen(false)} // Close dropdown on blur
+            onBlur={() => setIsDropdownOpen(false)}
             className="hover:text-black focus:outline-none"
             aria-haspopup="true"
             aria-expanded={isDropdownOpen}
           >
-            Categories ▼
+            Categories <span className="ml-1">▼</span>
           </button>
           <div
             className={`absolute left-0 mt-2 w-48 bg-white border overflow-hidden rounded-lg shadow-lg z-50 ${

@@ -6,6 +6,7 @@ import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import AuthLayout from "./routes/AuthRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PostDetail from "./pages/PostDetail"; // Import komponen PostDetail
 import FavoritePage from "./pages/FavoritePage";
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="favorite" element={<FavoritePage />} />
-
+        <Route path="post/:id" element={<PostDetail />} />
+          
         <Route element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
