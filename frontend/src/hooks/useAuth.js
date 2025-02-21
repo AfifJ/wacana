@@ -5,7 +5,7 @@ import axios from "axios";
 export function useAuth() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(() => {
-    return JSON.parse(localStorage.getItem("user")) || null;
+    return JSON.parse(sessionStorage.getItem("user")) || null;
   });
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ export function useAuth() {
         name,
         profilePic: "https://i.pravatar.cc/50",
       };
-      localStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
       // navigate("/profile");
     } catch (error) {
@@ -41,7 +41,7 @@ export function useAuth() {
         email,
         password,
       });
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      sessionStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user);
       navigate("/");
     } catch (error) {
@@ -52,7 +52,7 @@ export function useAuth() {
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     setUser(null);
   };
 
@@ -65,7 +65,7 @@ export function useAuth() {
       );
       alert(response.data.message);
       setUser(response.data.user);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      sessionStorage.setItem("user", JSON.stringify(response.data.user));
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Gagal memperbarui profil");

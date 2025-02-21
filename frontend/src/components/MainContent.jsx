@@ -1,125 +1,142 @@
-import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import useArticles from "../hooks/useArticles";
+import { useState, useEffect } from "react";
+import { addToFavorite } from "../utils/addToFavorite";
+import { removeFromFavorite } from "../utils/removeFromFavorite";
+import Loader from "./Loader";
 
-export default function Navbar() {
-  const { user, logout } = useAuth();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Mengambil inisial dari nama user
-  const getInitials = (name) => {
-    const initials = name.split(" ").map((n) => n[0]).join("");
-    return initials.toUpperCase();
-  };
-
-  const categories = ["Category 1", "Category 2", "Category 3"];
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+const MainContent = () => {
+  const { error, loading, fetchArticlesWithFavoriteStatus } = useArticles();
+  const [articles, setArticles] = useState([]);
+  const [user, setUser] = useState(() => {
+    const storedUser = sessionStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    if (user) {
+      fetchArticlesWithFavoriteStatus(user.id).then((updatedArticles) => {
+        setArticles(updatedArticles);
+      });
+    }
+  }, [user]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 6);
+  };
 
   return (
-    <nav
-      className={`bg-white shadow-md py-4 px-6 flex justify-between items-center ${
-        isScrolled ? "fixed top-0 left-0 right-0 z-50" : ""
-      }`}
-    >
-      <Link to="/" className="flex items-center space-x-3">
-        <span className="text-xl font-bold flex items-center">
-          <span className="text-black">⚡</span> Wacana
-        </span>
-      </Link>
-      <div className="hidden md:flex space-x-6 text-gray-700">
-        <div className="relative group">
-          <button
-            onClick={toggleDropdown}
-            onBlur={() => setIsDropdownOpen(false)}
-            className="hover:text-black focus:outline-none"
-            aria-haspopup="true"
-            aria-expanded={isDropdownOpen}
-          >
-            Categories <span className="ml-1">▼</span>
-          </button>
-          <div
-            className={`absolute left-0 mt-2 w-48 bg-white border overflow-hidden rounded-lg shadow-lg z-50 ${
-              isDropdownOpen ? "block" : "hidden"
-            }`}
-          >
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                to={`/category/${category}`}
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                {category}
-              </Link>
-            ))}
-          </div>
+    <div className="max-w-6xl mx-auto px-6 py-12">
+      <section className="relative w-full h-[300px] rounded-xl overflow-hidden">
+        <img
+          src="https://unsplash.it/500/500"
+          alt="Hero"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center p-6 text-white">
+          <h2 className="text-3xl font-bold">
+            Breaking Into Product Design: Advice from Untitled Founder, Frankie
+          </h2>
+          <p className="mt-2 text-lg">
+            Let{"'"}s get one thing out of the way: You don{`'`}t need a fancy
+            degree to get into Product Design.
+          </p>
         </div>
-        <Link to="/favorite" className="hover:text-black">
-          Favorit
-        </Link>
-        <Link to="/posts" className="hover:text-black">
-          Your Post
-        </Link>
-        <Link to="/about" className="hover:text-black">
-          About
-        </Link>
-        <Link
-          to="/create"
-          className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"
-        >
-          Create
-        </Link>
-      </div>
-      <div className="flex space-x-4 items-center">
-        {user ? (
-          <div className="flex items-center gap-4">
-            <Link to="/profile" className="flex items-center gap-4">
-              {user.photo_profile ? (
+      </section>
+
+      <section className="mt-12">
+        <h3 className="text-2xl font-bold">Articles</h3>
+        {loading && <Loader />}
+        {error && <p>Error: {error}</p>}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          {articles.slice(0, visibleCount).map((article, index) => {
+            return (
+              <div
+                key={index}
+                className="relative bg-white rounded-lg shadow overflow-hidden"
+              >
                 <img
-                  src={user.photo_profile}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
+                  src={article.thumbnail}
+                  alt={`Blog ${article.title}`}
+                  className="w-full h-40 object-cover"
                 />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
-                  <span className="text-white">{getInitials(user.username)}</span>
+                {article.isFavorite ? (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await removeFromFavorite({
+                          article_id: article._id,
+                          user_id: user.id,
+                        });
+                        setArticles((prevArticles) =>
+                          prevArticles.map((item) =>
+                            item._id === article._id
+                              ? { ...item, isFavorite: false }
+                              : item
+                          )
+                        );
+                      } catch (error) {
+                        console.error("Failed to remove favorite", error);
+                      }
+                    }}
+                    className="absolute top-2 right-2 px-3 py-1 rounded border bg-gray-600 text-white border-gray-400 hover:opacity-90 focus:outline-none"
+                  >
+                    Favorited
+                  </button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await addToFavorite({
+                          article_id: article._id,
+                          user_id: user.id,
+                        });
+                        setArticles((prevArticles) =>
+                          prevArticles.map((item) =>
+                            item._id === article._id
+                              ? { ...item, isFavorite: true }
+                              : item
+                          )
+                        );
+                      } catch (error) {
+                        console.error("Failed to add favorite", error);
+                      }
+                    }}
+                    className="absolute top-2 right-2 px-3 py-1 rounded border bg-white text-gray-800 border-gray-400 hover:opacity-90 focus:outline-none"
+                  >
+                    Add to Favorites
+                  </button>
+                )}
+                <div className="p-4">
+                  <Link to={`/post/${article._id}`}>
+                    <h4 className="text-lg font-semibold">{article.title}</h4>
+                    <p className="text-gray-600 text-sm mt-2">
+                      {article.content}
+                    </p>
+                  </Link>
+                  <p className="text-gray-500 text-xs mt-2">
+                    Author: {article.author_id} • Category:{" "}
+                    {article.category_id}
+                  </p>
                 </div>
-              )}
-              <span>{user.username}</span>
-            </Link>
-            <button
-              onClick={logout}
-              className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"
-            >
-              Logout
-            </button>
-          </div>
-        ) : (
-          <>
-            <Link to="/login" className="text-gray-700 hover:text-black">
-              Log in
-            </Link>
-            <Link
-              to="/register"
-              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 focus:outline-none"
-            >
-              Sign up
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      {visibleCount < articles.length && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleLoadMore}
+            className="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+          >
+            Load more...
+          </button>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default MainContent;

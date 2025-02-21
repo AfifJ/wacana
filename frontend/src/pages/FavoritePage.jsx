@@ -2,11 +2,12 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import useArticles from "../hooks/useArticles";
 import { removeFromFavorite } from "../utils/removeFromFavorite"; // added import
+import Loader from "../components/Loader";
 
 const FavoritePage = () => {
   const [favoriteArticles, setFavoriteArticles] = useState([]);
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const { loading, error, fetchFavoriteArticles } = useArticles();
@@ -26,7 +27,10 @@ const FavoritePage = () => {
         <section>
           <h2 className="text-3xl font-bold mb-6">Favorite Articles</h2>
           {loading ? (
-            <p>Loading favorite articles...</p>
+            <p>
+              <Loader />
+              Loading favorite articles...
+            </p>
           ) : error ? (
             <p>Error: {error}</p>
           ) : favoriteArticles && favoriteArticles.length ? (

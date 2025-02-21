@@ -10,6 +10,7 @@ import PostDetail from "./pages/articles/PostDetail"; // Import komponen PostDet
 import FavoritePage from "./pages/FavoritePage";
 import CreateArticle from "./pages/articles/CreateArticle";
 import MyPost from "./pages/MyPost";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
         <Route path="post/:id" element={<PostDetail />} />
         <Route path="create" element={<CreateArticle />} />
         <Route path="posts/" element={<MyPost />} />
-          
+        <Route path="search/" element={<SearchPage />} />
+
         <Route element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
