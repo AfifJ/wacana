@@ -7,6 +7,14 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const getInitials = (name) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+    return initials.toUpperCase();
+  };
+
   const categories = ["Category 1", "Category 2", "Category 3"];
 
   const toggleDropdown = () => {
@@ -27,16 +35,13 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={`fixed w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center transition-opacity duration-300 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
-      <div className="flex items-center space-x-3">
+    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+      <Link to="/" className="flex items-center space-x-3">
         <span className="text-xl font-bold flex items-center">
           <span className="text-black">⚡</span> Wacana
         </span>
-      </div>
+      </Link>
       <div className="hidden md:flex space-x-6 text-gray-700">
-        <Link to="/" className="hover:text-black">
-          Home
-        </Link>
         <div className="relative group">
           <button
             onClick={toggleDropdown}
@@ -48,7 +53,7 @@ export default function Navbar() {
             Categories <span className="ml-1">▼</span>
           </button>
           <div
-            className={`absolute left-0 mt-2 w-48 bg-white border rounded-lg shadow-lg ${
+            className={`absolute left-0 mt-2 w-48 bg-white border overflow-hidden rounded-lg shadow-lg z-50 ${
               isDropdownOpen ? "block" : "hidden"
             }`}
           >
@@ -63,7 +68,7 @@ export default function Navbar() {
             ))}
           </div>
         </div>
-        <Link to="/" className="hover:text-black">
+        <Link to="/favorite" className="hover:text-black">
           Favorit
         </Link>
         <Link to="/about" className="hover:text-black">
@@ -72,20 +77,30 @@ export default function Navbar() {
       </div>
       <div className="flex space-x-4 items-center">
         {user ? (
-          <>
-            <img
-              src={user.profilePic}
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-            />
-            <span>{user.name}</span>
+          <div className="flex items-center gap-4">
+            <Link to="/profile" className="flex items-center gap-4" >
+              {user.photo_profile ? (
+                <img
+                  src={user.photo_profile}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
+                  <span className="text-white">
+                    {getInitials(user.username)}
+                  </span>
+                </div>
+              )}
+              <span>{user.username}</span>
+            </Link>
             <button
               onClick={logout}
-              className="text-gray-700 hover:text-black focus:outline-none"
+              className="text-gray-700 hover:text-black focus:outline-none border border-gray-500 rounded-md py-1 px-3"
             >
               Logout
             </button>
-          </>
+          </div>
         ) : (
           <>
             <Link to="/login" className="text-gray-700 hover:text-black">

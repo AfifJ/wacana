@@ -16,6 +16,7 @@ try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
     users_collection = client.wacana.users
+    articles_collection = client.wacana.articles
 except Exception as e:
     print("Error connecting to mongo")
     print(e)

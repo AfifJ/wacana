@@ -7,30 +7,27 @@ import HomePage from "./pages/HomePage";
 import AuthLayout from "./routes/AuthRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PostDetail from "./pages/PostDetail"; // Import komponen PostDetail
+import FavoritePage from "./pages/FavoritePage";
 
 function App() {
   return (
-    <Routes>
-      {/* Route untuk HomePage */}
-      <Route index element={<HomePage />} />
+    <>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="favorite" element={<FavoritePage />} />
+        <Route path="post/:id" element={<PostDetail />} />
+          
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+        </Route>
 
-      {/* Route untuk AboutPage */}
-      <Route path="about" element={<AboutPage />} />
-
-      {/* Route untuk Auth (Login dan Register) */}
-      <Route element={<AuthLayout />}>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-      </Route>
-
-      {/* Route untuk ProfilePage (Protected) */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="profile" element={<ProfilePage />} />
-      </Route>
-
-      {/* Route untuk Detail Post */}
-      <Route path="post/:id" element={<PostDetail />} />
-    </Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route path="profile" element={<ProfilePage />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
