@@ -1,11 +1,12 @@
 import Navbar from "../components/Navbar";
 import { useEffect } from "react";
 import useArticles from "../hooks/useArticles";
+import Loader from "../components/Loader";
 
 const MyPost = () => {
   const { articles, loading, error, getArticlesByUser } = useArticles();
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(sessionStorage.getItem("user"));
     if (user && user.id) {
       getArticlesByUser(user.id);
     }
@@ -18,7 +19,10 @@ const MyPost = () => {
       <section className="max-w-6xl mx-auto px-6 py-12">
         <h2 className="text-3xl font-bold mb-6">My Post</h2>
         {loading ? (
-          <p>Loading posts...</p>
+          <p>
+            <Loader />
+            Loading posts...
+          </p>
         ) : error ? (
           <p>Error: {error}</p>
         ) : favoriteArticles.length ? (

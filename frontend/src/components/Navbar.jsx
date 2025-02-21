@@ -55,6 +55,9 @@ export default function Navbar() {
               ))}
             </div>
           </div>
+          <Link to="/search" className="hover:text-black">
+            Search
+          </Link>
           <Link to="/favorite" className="hover:text-black">
             Favorit
           </Link>
