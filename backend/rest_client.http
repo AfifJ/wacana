@@ -25,4 +25,7 @@ GET {{BASE_URL}}/articles
 GET {{BASE_URL}}/auth/all
 
 ### Get Profile
-GET {{BASE_URL}}/auth/profile/67b8911e934984b4c0790b1e
+GET {{BASE_URL}}/auth/profile/67b892880260c8c9a4f62dcf
+
+###
+http://127.0.0.1:5000/auth/profile/

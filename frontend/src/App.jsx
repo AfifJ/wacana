@@ -16,12 +16,11 @@ function App() {
       <Route element={<AuthLayout />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-        <Route path="profile" element={<ProfilePage />} />
       </Route>
 
-    {/* <Route element={<ProtectedRoute />}>
+    <Route element={<ProtectedRoute />}>
       <Route path="profile" element={<ProfilePage />} />
-    </Route> */}
+    </Route>
 
     </Routes>
   );
