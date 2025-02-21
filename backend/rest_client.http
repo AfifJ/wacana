@@ -23,3 +23,6 @@ GET {{BASE_URL}}/articles
 
 ### articel
 GET {{BASE_URL}}/auth/all
+
+### Get Profile
+GET {{BASE_URL}}/auth/profile/67b8911e934984b4c0790b1e
