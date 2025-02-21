@@ -17,7 +17,13 @@ export function useAuth() {
         password,
         name,
       });
-      alert("Register Berhasil: " + response.data.message);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      alert("Register Berhasil: " + data.message);
       const userData = {
         email,
         name,
