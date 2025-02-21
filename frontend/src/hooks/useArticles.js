@@ -18,17 +18,6 @@ export default function useArticles() {
     }
   };
 
-<<<<<<< HEAD
-  const fetchArticleById = (id) => {
-    setLoading(true);
-    return fetch(`http://127.0.0.1:5000/articles/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .finally(() => setLoading(false));
-  };
-
   const postArticle = (article) => {
     setLoading(true);
     return fetch("http://127.0.0.1:5000/articles/", {
@@ -56,8 +45,6 @@ export default function useArticles() {
       });
   };
 
-  return { articles, error, loading, fetchArticles, fetchArticleById, postArticle };
-=======
   const getArticleById = async (id) => {
     setLoading(true);
     try {
@@ -148,6 +135,6 @@ export default function useArticles() {
     getArticlesByUser,
     fetchFavoriteArticles,
     fetchArticlesWithFavoriteStatus,
+    postArticle
   };
->>>>>>> main
 }
