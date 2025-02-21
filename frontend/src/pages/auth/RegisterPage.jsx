@@ -36,7 +36,7 @@ export default function RegisterPage() {
     }
 
     try {
-      register(email, password);
+      register(email, password, email);
     } catch (err) {
       setErrors({ general: err.message });
     }
