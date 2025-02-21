@@ -7,7 +7,10 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const getInitials = (name) => {
-    const initials = name.split(" ").map((n) => n[0]).join("");
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
     return initials.toUpperCase();
   };
 
@@ -55,12 +58,16 @@ export default function Navbar() {
           <Link to="/search" className="hover:text-black">
             Search
           </Link>
-          <Link to="/favorite" className="hover:text-black">
-            Favorit
-          </Link>
-          <Link to="/posts" className="hover:text-black">
-            Your Post
-          </Link>
+          {user && (
+            <>
+              <Link to="/favorite" className="hover:text-black">
+                Favorit
+              </Link>
+              <Link to="/posts" className="hover:text-black">
+                Your Post
+              </Link>
+            </>
+          )}
           <Link to="/about" className="hover:text-black">
             About
           </Link>

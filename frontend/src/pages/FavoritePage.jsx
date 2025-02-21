@@ -27,10 +27,10 @@ const FavoritePage = () => {
         <section>
           <h2 className="text-3xl font-bold mb-6">Favorite Articles</h2>
           {loading ? (
-            <p>
+            <div>
               <Loader />
               Loading favorite articles...
-            </p>
+            </div>
           ) : error ? (
             <p>Error: {error}</p>
           ) : favoriteArticles && favoriteArticles.length ? (

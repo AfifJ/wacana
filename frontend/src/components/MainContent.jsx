@@ -6,7 +6,9 @@ import { removeFromFavorite } from "../utils/removeFromFavorite";
 import Loader from "./Loader";
 
 const MainContent = () => {
-  const { error, loading, fetchArticlesWithFavoriteStatus } = useArticles();
+  const { error, fetchArticlesWithFavoriteStatus } = useArticles();
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadingFavorites, setLoadingFavorites] = useState({});
   const [articles, setArticles] = useState([]);
   const [user, setUser] = useState(() => {
     const storedUser = sessionStorage.getItem("user");
@@ -18,9 +20,43 @@ const MainContent = () => {
     if (user) {
       fetchArticlesWithFavoriteStatus(user.id).then((updatedArticles) => {
         setArticles(updatedArticles);
+        setInitialLoading(false);
       });
     }
   }, [user]);
+
+  const handleFavoriteToggle = async (article) => {
+    const isCurrentlyFavorite = article.isFavorite;
+    setLoadingFavorites((prev) => ({
+      ...prev,
+      [article._id]: true,
+    }));
+
+    try {
+      if (isCurrentlyFavorite) {
+        await removeFromFavorite({
+          article_id: article._id,
+          user_id: user.id,
+        });
+      } else {
+        await addToFavorite({
+          article_id: article._id,
+          user_id: user.id,
+        });
+      }
+      // Re-fetch articles to ensure the UI is in sync with the database
+      const updatedArticles = await fetchArticlesWithFavoriteStatus(user.id);
+      setArticles(updatedArticles);
+    } catch (error) {
+      console.error("Failed to update favorite", error);
+      // Optionally, you can revert the UI state here if needed
+    } finally {
+      setLoadingFavorites((prev) => ({
+        ...prev,
+        [article._id]: false,
+      }));
+    }
+  };
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 6);
@@ -47,82 +83,53 @@ const MainContent = () => {
 
       <section className="mt-12">
         <h3 className="text-2xl font-bold">Articles</h3>
-        {loading && <Loader />}
+        {user && initialLoading && <Loader />}
         {error && <p>Error: {error}</p>}
+        {!user && <div>Silahkan login dulu</div>}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          {articles.slice(0, visibleCount).map((article, index) => {
-            return (
-              <div
-                key={index}
-                className="relative bg-white rounded-lg shadow overflow-hidden"
-              >
-                <img
-                  src={article.thumbnail}
-                  alt={`Blog ${article.title}`}
-                  className="w-full h-40 object-cover"
-                />
-                {article.isFavorite ? (
+          {user &&
+            articles.slice(0, visibleCount).map((article, index) => {
+              return (
+                <div
+                  key={index}
+                  className={`relative rounded-lg shadow overflow-hidden ${
+                    article.isFavorite ? "bg-white" : "bg-gray-100"
+                  }`}
+                >
+                  <img
+                    src={article.thumbnail}
+                    alt={`Blog ${article.title}`}
+                    className="w-full h-40 object-cover"
+                  />
                   <button
-                    onClick={async () => {
-                      try {
-                        await removeFromFavorite({
-                          article_id: article._id,
-                          user_id: user.id,
-                        });
-                        setArticles((prevArticles) =>
-                          prevArticles.map((item) =>
-                            item._id === article._id
-                              ? { ...item, isFavorite: false }
-                              : item
-                          )
-                        );
-                      } catch (error) {
-                        console.error("Failed to remove favorite", error);
-                      }
-                    }}
+                    onClick={() => handleFavoriteToggle(article)}
                     className="absolute top-2 right-2 px-3 py-1 rounded border bg-gray-600 text-white border-gray-400 hover:opacity-90 focus:outline-none"
+                    disabled={loadingFavorites[article._id]}
                   >
-                    Favorited
+                    {loadingFavorites[article._id]
+                      ? article.isFavorite
+                        ? "Removing..."
+                        : "Adding..."
+                      : article.isFavorite
+                      ? "Favorited"
+                      : "Add to Favorites"}
                   </button>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      try {
-                        await addToFavorite({
-                          article_id: article._id,
-                          user_id: user.id,
-                        });
-                        setArticles((prevArticles) =>
-                          prevArticles.map((item) =>
-                            item._id === article._id
-                              ? { ...item, isFavorite: true }
-                              : item
-                          )
-                        );
-                      } catch (error) {
-                        console.error("Failed to add favorite", error);
-                      }
-                    }}
-                    className="absolute top-2 right-2 px-3 py-1 rounded border bg-white text-gray-800 border-gray-400 hover:opacity-90 focus:outline-none"
-                  >
-                    Add to Favorites
-                  </button>
-                )}
-                <div className="p-4">
-                  <Link to={`/post/${article._id}`}>
-                    <h4 className="text-lg font-semibold">{article.title}</h4>
-                    <p className="text-gray-600 text-sm mt-2">
-                      {article.content}
+
+                  <div className="p-4">
+                    <Link to={`/post/${article._id}`}>
+                      <h4 className="text-lg font-semibold">{article.title}</h4>
+                      <p className="text-gray-600 text-sm mt-2">
+                        {article.content}
+                      </p>
+                    </Link>
+                    <p className="text-gray-500 text-xs mt-2">
+                      Author: {article.author_id} • Category:{" "}
+                      {article.category_id}
                     </p>
-                  </Link>
-                  <p className="text-gray-500 text-xs mt-2">
-                    Author: {article.author_id} • Category:{" "}
-                    {article.category_id}
-                  </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </section>
       {visibleCount < articles.length && (

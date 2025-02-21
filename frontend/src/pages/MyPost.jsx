@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useArticles from "../hooks/useArticles";
 import Loader from "../components/Loader";
+import Button from "../components/Button";
 
 const MyPost = () => {
   const navigate = useNavigate();
@@ -19,21 +20,17 @@ const MyPost = () => {
     <>
       <Navbar />
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold">My Post</h2>
-          <Link
-            to="/create"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
-          >
-            Create New Post
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-bold mb-6">My Post</h2>
+          <Link to="/create">
+            <Button>Create</Button>
           </Link>
         </div>
-
         {loading ? (
-          <p>
+          <div>
             <Loader />
             Loading posts...
-          </p>
+          </div>
         ) : error ? (
           <p>Error: {error}</p>
         ) : articles.length ? (

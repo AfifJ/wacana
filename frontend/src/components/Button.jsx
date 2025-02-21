@@ -3,7 +3,7 @@ export default function Button({ children, onClick, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+      className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 focus:outline-none"
     >
       {children}
     </button>

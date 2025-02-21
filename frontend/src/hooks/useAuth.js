@@ -52,8 +52,10 @@ export function useAuth() {
   };
 
   const logout = () => {
-    sessionStorage.removeItem("user");
-    setUser(null);
+    if (window.confirm("Are you sure you want to log out?")) {
+      sessionStorage.removeItem("user");
+      setUser(null);
+    }
   };
 
   const updateProfile = async (userId, updateData) => {
